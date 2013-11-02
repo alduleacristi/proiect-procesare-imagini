@@ -72,6 +72,15 @@
     <ClInclude Include="Filters.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ContrastLiniar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ContrastPolinomial.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MedianFilter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="OpenCVInterface.cpp">
@@ -114,6 +123,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Filters.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ContrastLiniar.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ContrastPolinomial.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MedianFilter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
