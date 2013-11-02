@@ -51,6 +51,7 @@ private:
 	MagnifierPtr mag;
 	GrayRowPtr gr;
 	GrayColumnPtr gc;
+	void CalculeazaFiltruMedian(int k);
 // Implementation
 protected:
 	HICON m_hIcon;

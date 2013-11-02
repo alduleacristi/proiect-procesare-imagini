@@ -23,4 +23,5 @@ private:
 public:
 	afx_msg void OnBnClickedOk();
 	int getB(void);
+	afx_msg void OnBnClickedCancel();
 };
