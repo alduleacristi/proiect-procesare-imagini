@@ -6,6 +6,8 @@
 #include "OpenCVInterface.h"
 #include "OpenCVInterfaceDlg.h"
 #include "afxdialogex.h"
+#include "ContrastPolinomial.h"
+#include "MedianFilter.h"
 
 #include <time.h>
 
@@ -48,6 +50,9 @@ BEGIN_MESSAGE_MAP(COpenCVInterfaceDlg, CDialogEx)
 	ON_COMMAND(ID_TOOLS_GRAYLEVELROW, &COpenCVInterfaceDlg::OnToolsGraylevelrow)
 	ON_COMMAND(ID_TOOLS_GRAYLEVELCOLUMN, &COpenCVInterfaceDlg::OnToolsGraylevelcolumn)
 	ON_COMMAND(ID_FILTERS_GAUSSIANFILTER, &COpenCVInterfaceDlg::OnFiltersGaussianfilter)
+	ON_COMMAND(ID_CONTRAST_LOGARITMICOPERATOR, &COpenCVInterfaceDlg::OnContrastLogaritmicoperator)
+	ON_COMMAND(ID_CONTRAST_LOGARITMICOPERATOR, &COpenCVInterfaceDlg::OnContrastLogaritmicoperator)
+	ON_COMMAND(ID_FILTERS_MEDIANFILTER, &COpenCVInterfaceDlg::OnFiltersMedianfilter)
 END_MESSAGE_MAP()
 
 // COpenCVInterfaceDlg message handlers
@@ -419,9 +424,49 @@ void COpenCVInterfaceDlg::OnFiltersGaussianfilter()
 	if(mainImage.cols)
 	{
 
-		prelImage=Filters::gaussianFilter(mainImage,s);
-		ShowResult(prelImage);
+		//prelImage=Filters::gaussianFilter(mainImage,s);
+	//	ShowResult(prelImage);
 	}
 	else
 		MessageBox("No image loaded");
+}
+
+
+
+
+void COpenCVInterfaceDlg::OnContrastLogaritmicoperator()
+{
+	double *LookUp ;
+	LookUp = CreateLookUpForContrast();
+	prelImage=InitImage(mainImage.rows,mainImage.cols);
+	for(int i=0;i<mainImage.rows;i++)
+		for(int j=0;j<mainImage.cols;j++)
+		{
+			prelImage.at<uchar>(i,j)=LookUp[mainImage.at<uchar>(i,j)];
+		}
+	ShowResult(prelImage);
+	delete LookUp;
+}
+
+
+void COpenCVInterfaceDlg::OnFiltersMedianfilter()
+{
+	int k = 5;
+	int* v = new int[k*k];
+	int n=mainImage.rows,m=mainImage.cols;
+	prelImage=InitImage(n,m);
+
+	for(int i=k/2;i<n -k/2;i++)
+		for(int j=k/2;j<m -k/2;j++){
+			int poz=0;
+			for(int i2=i-k/2;i2<i+k/2;i2++)
+				for(int j2=j-k/2;j2<j+k/2;j2++)
+					v[poz++]=mainImage.at<uchar>(i2,j2);
+			int aux = statistici(poz/2,0,poz-1,v);
+			prelImage.at<uchar>(i,j)=aux;
+		}
+
+		ShowResult(prelImage);
+
+	delete v;
 }

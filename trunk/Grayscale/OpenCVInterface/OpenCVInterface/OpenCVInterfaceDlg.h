@@ -89,4 +89,6 @@ public:
 	afx_msg void OnToolsGraylevelrow();
 	afx_msg void OnToolsGraylevelcolumn();
 	afx_msg void OnFiltersGaussianfilter();
+	afx_msg void OnContrastLogaritmicoperator();
+	afx_msg void OnFiltersMedianfilter();
 };
