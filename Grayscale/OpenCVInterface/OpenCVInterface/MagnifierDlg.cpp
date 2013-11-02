@@ -37,17 +37,12 @@ BOOL MagnifierDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
-	rezim.create(9,9,CV_MAKETYPE(im.depth(),1));
+	rezim.create(9,9,CV_8UC1);
 	for(int i=0;i<9;i++)
 		for(int j=0;j<9;j++)
 			rezim.at<uchar>(i,j)=255;
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
-}
-
-void MagnifierDlg::SetImage(Mat& img)
-{
-	im=img;
 }
 
 void MagnifierDlg::OnPaint()

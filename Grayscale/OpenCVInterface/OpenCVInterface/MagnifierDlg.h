@@ -29,8 +29,6 @@ public:
 
 private:
 	Mat rezim;
-	Mat im;
 public:
-	void SetImage(Mat& img);
 	void Zoom(Mat& im);
 };
