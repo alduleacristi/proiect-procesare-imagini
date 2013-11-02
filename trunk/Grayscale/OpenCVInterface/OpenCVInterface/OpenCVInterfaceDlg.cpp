@@ -8,6 +8,7 @@
 #include "afxdialogex.h"
 #include "ContrastPolinomial.h"
 #include "MedianFilter.h"
+#include "FiltruMedianCristi.h"
 
 #include <time.h>
 
@@ -448,10 +449,8 @@ void COpenCVInterfaceDlg::OnContrastLogaritmicoperator()
 	delete LookUp;
 }
 
-
-void COpenCVInterfaceDlg::OnFiltersMedianfilter()
+void COpenCVInterfaceDlg::CalculeazaFiltruMedian(int k)
 {
-	int k = 5;
 	int* v = new int[k*k];
 	int n=mainImage.rows,m=mainImage.cols;
 	prelImage=InitImage(n,m);
@@ -469,4 +468,17 @@ void COpenCVInterfaceDlg::OnFiltersMedianfilter()
 		ShowResult(prelImage);
 
 	delete v;
+}
+
+
+void COpenCVInterfaceDlg::OnFiltersMedianfilter()
+{
+	int k;
+	FiltruMedianCristi obj;
+	if(obj.DoModal())
+	{
+		k = obj.getVal();
+		CalculeazaFiltruMedian(k);
+	}
+	
 }

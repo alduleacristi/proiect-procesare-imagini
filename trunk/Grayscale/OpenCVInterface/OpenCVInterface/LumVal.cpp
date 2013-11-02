@@ -29,6 +29,7 @@ void LumVal::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(LumVal, CDialogEx)
 	ON_BN_CLICKED(IDOK, &LumVal::OnBnClickedOk)
+	ON_BN_CLICKED(IDCANCEL, &LumVal::OnBnClickedCancel)
 END_MESSAGE_MAP()
 
 
@@ -47,4 +48,11 @@ void LumVal::OnBnClickedOk()
 int LumVal::getB(void)
 {
 	return b;
+}
+
+
+void LumVal::OnBnClickedCancel()
+{
+	// TODO: Add your control notification handler code here
+	CDialogEx::OnCancel();
 }
