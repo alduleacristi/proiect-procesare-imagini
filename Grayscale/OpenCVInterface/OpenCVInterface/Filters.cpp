@@ -1,8 +1,8 @@
 #include "StdAfx.h"
 #include "Filters.h"
-#include<sstream>
+//#include<sstream>
 
-using namespace std;
+//using namespace std;
 
 Mat Filters::gaussianFilter(Mat& im, double sigma)
 {
