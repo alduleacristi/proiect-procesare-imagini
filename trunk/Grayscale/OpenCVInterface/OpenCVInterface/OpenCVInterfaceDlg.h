@@ -3,7 +3,6 @@
 //
 
 #pragma once
-#include <vld.h>
 
 #include <opencv2\core\core.hpp>
 #include<opencv2\highgui\highgui.hpp>
@@ -18,7 +17,7 @@
 #include"GrayRow.h"
 #include"GrayColumn.h"
 #include"Filters.h"
-
+#include"Sigma.h"
 #include<memory>
 
 using namespace cv;
