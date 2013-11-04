@@ -228,8 +228,6 @@ void COpenCVInterfaceDlg::OnToolsMagnifier()
 
 		mag->Create(MagnifierDlg::IDD,0);
 
-		mag->SetImage(mainImage);
-
 		mag->ShowWindow(SW_SHOW);
 	}
 	else
@@ -277,7 +275,7 @@ void COpenCVInterfaceDlg::OnLButtonDown(UINT nFlags, CPoint point)
 	//	p2.y=mainImage.rows;
 	//	line(mainImage,p1,p2,RGB(0,255,0));
 	//	gc->Invalidate();
-	//	//gc.release();
+	//	
 	//}
 
 	//if(gr.get())
@@ -291,7 +289,7 @@ void COpenCVInterfaceDlg::OnLButtonDown(UINT nFlags, CPoint point)
 	//	p2.y=point.y;
 	//	line(mainImage,p1,p2,RGB(0,255,0));
 	//	gr->Invalidate();
-	//	//gr.release();
+	//	
 	//}
 
 	if(mag.get())
@@ -310,7 +308,8 @@ void COpenCVInterfaceDlg::OnToolsBinarization()
 	if(mainImage.cols)
 	{
 		Bin1Val dlg;
-		if(dlg.DoModal())
+		INT_PTR nRet=dlg.DoModal();
+		if(nRet==IDOK)
 		{
 			int T=dlg.getT();
 			prelImage=Tools::binarization(mainImage,T);
@@ -326,7 +325,8 @@ void COpenCVInterfaceDlg::OnToolsBinarization2()
 	if(mainImage.cols)
 	{
 		Bin2Val dlg;
-		if(dlg.DoModal())
+		INT_PTR nRet=dlg.DoModal();
+		if(nRet==IDOK)
 		{
 			int T1=dlg.getT1();
 			int T2=dlg.getT2();
@@ -343,7 +343,8 @@ void COpenCVInterfaceDlg::OnLuminosityGammacorrection()
 	if(mainImage.cols)
 	{
 		GammaValue dlg;
-		if(dlg.DoModal())
+		INT_PTR nRet=dlg.DoModal();
+		if(nRet==IDOK)
 		{
 			double g=dlg.getGamma();
 			prelImage=Tools::gammaCorrection(mainImage,g);
@@ -359,8 +360,10 @@ void COpenCVInterfaceDlg::OnLuminosityIncreaseluminosity()
 	if(mainImage.cols)
 	{
 		LumVal dlg;
-		if(dlg.DoModal())
+		INT_PTR nRet=dlg.DoModal();
+		if(nRet==IDOK)
 		{
+
 			int b=dlg.getB();
 			prelImage=Tools::increaseLuminosity(mainImage,b);
 			ShowResult(prelImage);
@@ -375,8 +378,10 @@ void COpenCVInterfaceDlg::OnLuminosityDecreaseluminosity()
 	if(mainImage.cols)
 	{
 		LumVal dlg;
-		if(dlg.DoModal())
+		INT_PTR nRet=dlg.DoModal();
+		if(nRet==IDOK)
 		{
+
 			int b=dlg.getB();
 			prelImage=Tools::decreaseLuminosity(mainImage,b);
 			ShowResult(prelImage);
@@ -424,16 +429,20 @@ void COpenCVInterfaceDlg::OnFiltersGaussianfilter()
 {
 	if(mainImage.cols)
 	{
+		Sigma dlg;
+		INT_PTR nRet=dlg.DoModal();
+		if(nRet==IDOK)
+		{
+			double s;
+			s=dlg.getSigma();
 
-		//prelImage=Filters::gaussianFilter(mainImage,s);
-	//	ShowResult(prelImage);
+			prelImage=Filters::gaussianFilter(mainImage,s);
+			ShowResult(prelImage);
+		}
 	}
 	else
 		MessageBox("No image loaded");
 }
-
-
-
 
 void COpenCVInterfaceDlg::OnContrastLogaritmicoperator()
 {
