@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include <fstream>
 
 #include <opencv2\core\core.hpp>
 #include<opencv2\highgui\highgui.hpp>
@@ -17,7 +18,7 @@
 #include"GrayRow.h"
 #include"GrayColumn.h"
 #include"Filters.h"
-#include"Sigma.h"
+//#include"Sigma.h"
 #include<memory>
 
 using namespace cv;
@@ -45,12 +46,13 @@ public:
 private:
 	Mat mainImage;
 	Mat prelImage;
+	Mat result;
 	CBrush *ImageBrush;
 	CResultPtr m_Result;
 	MagnifierPtr mag;
 	GrayRowPtr gr;
 	GrayColumnPtr gc;
-	void CalculeazaFiltruMedian(int k);
+	Mat CalculeazaFiltruMedian(int k);
 // Implementation
 protected:
 	HICON m_hIcon;
@@ -91,4 +93,5 @@ public:
 	afx_msg void OnFiltersGaussianfilter();
 	afx_msg void OnContrastLogaritmicoperator();
 	afx_msg void OnFiltersMedianfilter();
+	afx_msg void OnFiltersCannyoperator();
 };
