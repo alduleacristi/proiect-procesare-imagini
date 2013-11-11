@@ -56,7 +56,8 @@ BEGIN_MESSAGE_MAP(COpenCVInterfaceDlg, CDialogEx)
 	ON_COMMAND(ID_CONTRAST_LOGARITMICOPERATOR, &COpenCVInterfaceDlg::OnContrastLogaritmicoperator)
 	ON_COMMAND(ID_CONTRAST_LOGARITMICOPERATOR, &COpenCVInterfaceDlg::OnContrastLogaritmicoperator)
 	ON_COMMAND(ID_FILTERS_MEDIANFILTER, &COpenCVInterfaceDlg::OnFiltersMedianfilter)
-	ON_COMMAND(ID_FILTERS_CANNYOPERATOR, &COpenCVInterfaceDlg::OnFiltersCannyoperator)
+	ON_COMMAND(ID_CONTRAST_EXPONENTIAL, &COpenCVInterfaceDlg::OnContrastExponential)
+	ON_COMMAND(ID_FILTERS_MEDIANFILTER32797, &COpenCVInterfaceDlg::OnFiltersMedianFilterAnca)
 END_MESSAGE_MAP()
 
 // COpenCVInterfaceDlg message handlers
@@ -503,218 +504,122 @@ void COpenCVInterfaceDlg::OnFiltersMedianfilter()
 	
 }
 
-void COpenCVInterfaceDlg::OnFiltersCannyoperator()
+
+void COpenCVInterfaceDlg::OnContrastExponential()
 {
-	int n=mainImage.rows,m2=mainImage.cols;
-	prelImage=InitImage(n,m2);
-	//prelImage = CalculeazaFiltruMedian(3);
+	/*
+		Creez un ob de tip ParametersDlg. Cat timp parametrii "m" si "E" nu sunt ambii numere,
+		ii las utilizatorului oportunitatea de a introduce noi date.
+	*/
 
-	std::vector<std::vector <int>> rezSx,rezSy;
+	CParametersDlg parameters;
+	while(parameters.areNumbers == false && parameters.windowWasClosed == false)
+		parameters.DoModal();
 
-
-	int l=1,h=1,hi=mainImage.rows,li=mainImage.cols;
-	int m[3][3] = {{-1,0,1},{-2,0,2},{-1,0,1}};
-
-	for(int x=h;x<hi-h;x++)
+	//	Intr-un final, datele introduse sunt bune. Fac conversia la double.
+	if(parameters.areNumbers == true)
 	{
-		std::vector<int> aux;
-		for(int y=l;y<li-l;y++)
-		{                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+		double m = 0, pE = 0;
+		m = atof(parameters.m1);
+		pE = atof(parameters.E1);
+	
+		
 
-			int c=0,nr=0;
-			for(int i=-h;i<=h;i++)
+
+		// Modificarea imaginii
+
+		prelImage=InitImage(mainImage.rows,mainImage.cols);
+		for(int i=0;i<mainImage.rows;i++)
+			for(int j=0;j<mainImage.cols;j++)
 			{
-				for(int j=-l;j<=l;j++){
-					nr++;
-					c=c+mainImage.at<uchar>(x+i,y+j)*m[i+h][j+l];
-				}
+				double c = pow(m,pE) / ( 255 * (pow(255,pE) + pow(m,pE)) );
+				prelImage.at<uchar>(i,j)=255 * ( pow(mainImage.at<uchar>(i,j),pE) / ( pow(mainImage.at<uchar>(i,j),pE) + pow(m,pE) ) + c*mainImage.at<uchar>(i,j) );
 			}
-			aux.push_back(c);
-			if(c<0)
-				c=0;
-			else
-				if(c>255)
-					c=255;
-			
-			prelImage.at<uchar>(x,y)=c;
-		}
-		rezSy.push_back(aux);
+		ShowResult(prelImage);
 	}
-	//ShowResult(prelImage);
+}
 
-	l=1,h=1,hi=mainImage.rows,li=mainImage.cols;
-	int m3[3][3] = {{-1,-2,-1},{0,0,0},{1,2,1}};
+double COpenCVInterfaceDlg::Partitie(double v[], int st, int dr)
+{
+	double pivot = v[dr];
+	int i = st-1;
+	for(int j=st; j<=dr-1; j++)
+		if(v[j] <= pivot)
+		{
+			i++;
+			double aux = v[i];
+			v[i] = v[j];
+			v[j] = aux;
+		}
+	double aux = v[i+1];
+	v[i+1] = v[dr];
+	v[dr] = aux;
+	return i+1;
+}
 
-	for(int x=h;x<hi-h;x++)
+
+double COpenCVInterfaceDlg::Statistica(double v[], int k, int st, int dr)
+{
+	if(st<=dr)
 	{
-		std::vector<int> aux;
-		for(int y=l;y<li-l;y++)
-		{                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
-
-			double c=0.0;
-			for(int i=-h;i<=h;i++)
-			{
-				for(int j=-l;j<=l;j++)
-					c=c+mainImage.at<uchar>(x+i,y+j)*m3[i+h][j+l];
-			}
-
-			aux.push_back(c);
-			if(c<0)
-				c=0;
+		int poz = Partitie(v, st, dr);
+		if(k == poz)
+			return v[k];
+		else
+		{
+			if(k < poz)
+				return Statistica(v, k, st, poz-1);
 			else
-				if(c>255)
-					c=255;
-			//prelImage.at<uchar>(x,y)=c;
-			
+				return Statistica(v, k, poz+1, dr);
 		}
-		rezSx.push_back(aux);
 	}
-	
-	std::vector<std::vector<double>> gradient = CalculeazaGradient(rezSx,rezSy);
+	return 0;
+}
 
-	for(int i=1;i<rezSx.size()-1;i++)
-		for(int j=1;j<rezSx[0].size()-1;j++)
-		{
-			int dir = DeterminaDirectie(rezSx[i][j],rezSy[i][j]);
 
-			if(dir == 1)
+void COpenCVInterfaceDlg::OnFiltersMedianFilterAnca()
+{
+	/*
+		Creez un ob de tip MaskDlg. Cat timp parametrul introdus nu e numar,
+		il las pe utilizator sa introduca dimensiunea mastii din nou.
+	*/
+
+	CMaskDlg mask;
+	while(mask.DimensionIsValid() == false && mask.windowWasClosed == false)
+		mask.DoModal();
+
+	//	Intr-un final, datele introduse sunt bune. Fac conversia la double.
+	if(mask.DimensionIsValid() == true)
+	{
+		int n = 0;
+		n = atoi(mask.n1);
+
+		// Modificarea imaginii
+		
+		clock_t start, stop;
+		start = clock(); 
+		prelImage = InitImage(mainImage.rows,mainImage.cols);
+		for(int i=n/2; i<mainImage.rows-n/2; i++)
+			for(int j=n/2; j<mainImage.cols-n/2; j++)
 			{
-				double max = 0.0;
-
-				if(gradient[i][j] > max)
-					max = gradient[i][j];
-
-				if(gradient[i-1][j] > max)
-					max = gradient[i-1][j];
-
-				if( gradient[i+1][j] > max)
-					max = gradient[i+1][j]; 
-
-				if(gradient[i][j] == max){
-					gradient[i-1][j] = 0;
-					gradient[i+1][j] = 0;
-				}else if(gradient[i-1][j] == max){
-					gradient[i+1][j] = 0;
-					gradient[i][j] = 0;
-				}else if(gradient[i+1][j] == max){
-					gradient[i][j] = 0;
-					gradient[i-1][j] = 0;
+				double *v = new double[n*n];
+				int ind = -1;
+				for(int k1=0; k1<n; k1++)
+				{
+					for(int k2=0; k2<n; k2++)
+						v[++ind] = mainImage.at<uchar>(i-n/2+k1, j-n/2+k2);
 				}
+				
+				
+				int k = (n*n)/2;
+				prelImage.at<uchar>(i, j) = Statistica(v, k, 0, n*n-1);
 			}
+		stop = clock();
+		double rez = double(stop - start);
+		CString rezS;
+		rezS.Format("time = %lf", rez);
+		MessageBox(rezS + " seconds");
 
-			if(dir == 2)
-			{
-				double max = 0.0;
-
-				if(gradient[i][j] > max)
-					max = gradient[i][j];
-
-				if(gradient[i-1][j-1] > max)
-					max = gradient[i-1][j-1];
-
-				if( gradient[i+1][j+1] > max)
-					max = gradient[i+1][j+1]; 
-
-				if(gradient[i][j] == max){
-					gradient[i-1][j-1] = 0;
-					gradient[i+1][j+1] = 0;
-				}else if(gradient[i-1][j-1] == max){
-					gradient[i+1][j+1] = 0;
-					gradient[i][j] = 0;
-				}else if(gradient[i+1][j+1] == max){
-					gradient[i][j] = 0;
-					gradient[i-1][j-1] = 0;
-				}
-			}
-
-			if(dir == 3)
-			{
-				double max = 0.0;
-
-				if(gradient[i][j] > max)
-					max = gradient[i][j];
-
-				if(gradient[i][j-1] > max)
-					max = gradient[i][j-1];
-
-				if( gradient[i][j+1] > max)
-					max = gradient[i][j+1]; 
-
-				if(gradient[i][j] == max){
-					gradient[i][j-1] = 0;
-					gradient[i][j+1] = 0;
-				}else if(gradient[i][j-1] == max){
-					gradient[i][j+1] = 0;
-					gradient[i][j] = 0;
-				}else if(gradient[i][j+1] == max){
-					gradient[i][j] = 0;
-					gradient[i][j-1] = 0;
-				}
-			}
-
-			if(dir == 4)
-			{
-				double max = 0.0;
-
-				if(gradient[i][j] > max)
-					max = gradient[i][j];
-
-				if(gradient[i-1][j+1] > max)
-					max = gradient[i-1][j+1];
-
-				if( gradient[i+1][j-1] > max)
-					max = gradient[i+1][j-1]; 
-
-				if(gradient[i][j] == max){
-					gradient[i+1][j-1] = 0;
-					gradient[i-1][j+1] = 0;
-				}else if(gradient[i+1][j-1] == max){
-					gradient[i-1][j+1] = 0;
-					gradient[i][j] = 0;
-				}else if(gradient[i-1][j+1] == max){
-					gradient[i][j] = 0;
-					gradient[i+1][j-1] = 0;
-				}
-			}
-		}
-
-	for(int i=0;i<rezSx.size();i++)
-		for(int j=0;j<rezSx[0].size();j++)
-			if(gradient[i][j] < 0)
-				prelImage.at<uchar>(i,j) = 0;
-			else 
-				if(gradient[i][j] > 255)
-					prelImage.at<uchar>(i,j) = 255;
-				else
-					prelImage.at<uchar>(i,j) = gradient[i][j];
-	
-	for(int i=0;i<rezSx.size();i++)
-		for(int j=0;j<rezSx[0].size();j++)
-			if(prelImage.at<uchar>(i,j) < 60)
-				prelImage.at<uchar>(i,j) = 0;
-			else
-				if(prelImage.at<uchar>(i,j) > 100)
-					prelImage.at<uchar>(i,j) = 255;
-
-	for(int i=1;i<rezSx.size()-1;i++)
-		for(int j=1;j<rezSx[0].size()-1;j++)
-		{
-			if(prelImage.at<uchar>(i,j) != 255 && prelImage.at<uchar>(i,j) != 0)
-			{
-				bool ok = false;
-				for(int y=-1;y<=1;y++)
-					for(int x=-1;x<=1;x++)
-						if(prelImage.at<uchar>(i+y,j+x) = 255)
-						{
-							ok = true;
-							break;
-						}
-				if(ok)
-					prelImage.at<uchar>(i,j) = 255;
-			}
-		}
-
-	ShowResult(prelImage);
-
-	//ScrieLaFisier("Rezultat.txt",gradient,n,m2);
+		ShowResult(prelImage);
+	}
 }

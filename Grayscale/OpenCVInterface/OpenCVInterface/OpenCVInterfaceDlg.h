@@ -3,7 +3,7 @@
 //
 
 #pragma once
-#include <fstream>
+//#include <vld.h>
 
 #include <opencv2\core\core.hpp>
 #include<opencv2\highgui\highgui.hpp>
@@ -18,8 +18,12 @@
 #include"GrayRow.h"
 #include"GrayColumn.h"
 #include"Filters.h"
-//#include"Sigma.h"
+#include "ParametersDlg.h"
+#include "MaskDlg.h"
+
 #include<memory>
+#include <algorithm>
+#include <time.h>
 
 using namespace cv;
 // COpenCVInterfaceDlg dialog
@@ -53,6 +57,9 @@ private:
 	GrayRowPtr gr;
 	GrayColumnPtr gc;
 	Mat CalculeazaFiltruMedian(int k);
+
+	double Partitie(double v[], int st, int dr);
+	double Statistica(double v[], int k, int st, int dr);
 // Implementation
 protected:
 	HICON m_hIcon;
@@ -93,5 +100,6 @@ public:
 	afx_msg void OnFiltersGaussianfilter();
 	afx_msg void OnContrastLogaritmicoperator();
 	afx_msg void OnFiltersMedianfilter();
-	afx_msg void OnFiltersCannyoperator();
+	afx_msg void OnContrastExponential();
+	afx_msg void OnFiltersMedianFilterAnca();
 };
