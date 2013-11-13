@@ -72,16 +72,16 @@
     <ClInclude Include="Filters.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ContrastLiniar.h">
+    <ClInclude Include="ContrastPolinomial.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ContrastPolinomial.h">
+    <ClInclude Include="FiltruMedianCristi.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MedianFilter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FiltruMedianCristi.h">
+    <ClInclude Include="Sigma.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CannyOperator.h">
@@ -131,16 +131,16 @@
     <ClCompile Include="Filters.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ContrastLiniar.cpp">
+    <ClCompile Include="ContrastPolinomial.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ContrastPolinomial.cpp">
+    <ClCompile Include="FiltruMedianCristi.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MedianFilter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FiltruMedianCristi.cpp">
+    <ClCompile Include="Sigma.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CannyOperator.cpp">

@@ -72,6 +72,81 @@ Mat Filters::gaussianFilter(Mat& im, double sigma)
 	return rez;
 }
 
+Mat Filters::sobelDirectional(Mat& im) 
+{
+	Mat rez;
+	im=gaussianFilter(im,1.5);
+	rez.create(im.rows,im.cols,CV_MAKETYPE(im.depth(),1));
+	double fx[3][3]={{-1,0,1},
+				     {-2,0,2},
+					 {-1,0,1}
+					};
+	double fy[3][3]={{1,2,1},
+					 {0,0,0},
+					 {-1,-2,-1}
+					};
+
+	for(int j=0;j<im.cols;j++)
+	{
+		rez.at<uchar>(0,j)=0;
+		rez.at<uchar>(im.rows-1,j)=0;
+	}
+
+	for(int i=1;i<im.rows-2;i++)
+	{
+		rez.at<uchar>(i,0)=0;
+		rez.at<uchar>(i,im.cols-1)=0;
+	}
+
+	for (int y=1;y<im.rows-1;y++) 
+	{
+		for (int x=1;x<im.cols-1;x++) 
+		{
+			double sum_x = 0.0, sum_y=0.0;
+			for (int j=-1;j<=1;j++) 
+			{
+				for (int i=-1;i<=1;i++) 
+				{
+					sum_x+=fx[j+1][i+1]*im.at<uchar>(y+i,x+j);
+					sum_y+=fy[j+1][i+1]*im.at<uchar>(y+i,x+j);
+				}
+			}
+
+			double sum=sqrt(pow(sum_x,2)+pow(sum_y,2));
+			double u=atan2(sum_y,sum_x);
+
+			if(u>=-3*PI/4 && u<=-PI/4) 
+			{
+				if(sum>255)
+					rez.at<uchar>(y,x)=255;
+				else
+					if(sum<TH)
+						rez.at<uchar>(y,x)=0;
+					else
+						rez.at<uchar>(y,x)=sum;
+			}
+			else
+			{
+				if(u>=PI/4 && u<=3*PI/4)
+				{
+					if(sum>255)
+						rez.at<uchar>(y,x)=255;
+					else
+						if(sum<TH)
+						rez.at<uchar>(y,x)=0;
+					else
+						rez.at<uchar>(y,x)=sum;
+				}
+				else
+					rez.at<uchar>(y,x)=0;
+			}
+
+		}
+	}
+
+	return rez;
+}
+
 Filters::~Filters(void)
 {
 	//FreeConsole();
