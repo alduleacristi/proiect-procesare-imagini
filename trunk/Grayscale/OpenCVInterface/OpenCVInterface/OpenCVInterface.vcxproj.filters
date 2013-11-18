@@ -84,8 +84,8 @@
     <ClInclude Include="Sigma.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CannyOperator.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="ParametersDlg.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
