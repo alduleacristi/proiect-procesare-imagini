@@ -59,6 +59,7 @@ BEGIN_MESSAGE_MAP(COpenCVInterfaceDlg, CDialogEx)
 	ON_COMMAND(ID_CONTRAST_EXPONENTIAL, &COpenCVInterfaceDlg::OnContrastExponential)
 	ON_COMMAND(ID_FILTERS_MEDIANFILTER32797, &COpenCVInterfaceDlg::OnFiltersMedianFilterAnca)
 	ON_COMMAND(ID_FILTERS_ZERO, &COpenCVInterfaceDlg::OnFiltersZeroCrossingsAnca)
+	ON_COMMAND(ID_SOBEL_SOBELPI4, &COpenCVInterfaceDlg::OnSobelSobelpi4)
 END_MESSAGE_MAP()
 
 // COpenCVInterfaceDlg message handlers
@@ -100,7 +101,7 @@ void COpenCVInterfaceDlg::ResetImageBrush(void)
 
 
 	bmpB.CreateBitmap(mainImage.cols,mainImage.rows,4,8,RGB_buffer);
-	
+
 	delete []RGB_buffer;
 
 	if(ImageBrush) 
@@ -243,28 +244,28 @@ void COpenCVInterfaceDlg::OnToolsGraylevelrow()
 {
 	/*if(mainImage.cols)
 	{
-		gr=GrayRowPtr(new GrayRow(this));
+	gr=GrayRowPtr(new GrayRow(this));
 
-		gr->Create(GrayRow::IDD,0);
+	gr->Create(GrayRow::IDD,0);
 
-		gr->ShowWindow(SW_SHOW);
+	gr->ShowWindow(SW_SHOW);
 	}
 	else
-		MessageBox("No image loaded");*/
+	MessageBox("No image loaded");*/
 }
 
 void COpenCVInterfaceDlg::OnToolsGraylevelcolumn()
 {
 	/*if(mainImage.cols)
 	{
-		gc=GrayColumnPtr(new GrayColumn(this));
+	gc=GrayColumnPtr(new GrayColumn(this));
 
-		gc->Create(GrayColumn::IDD,0);
+	gc->Create(GrayColumn::IDD,0);
 
-		gc->ShowWindow(SW_SHOW);
+	gc->ShowWindow(SW_SHOW);
 	}
 	else
-		MessageBox("No image loaded");*/
+	MessageBox("No image loaded");*/
 }
 
 void COpenCVInterfaceDlg::OnLButtonDown(UINT nFlags, CPoint point)
@@ -432,7 +433,7 @@ void COpenCVInterfaceDlg::OnToolsHistogram()
 
 void COpenCVInterfaceDlg::OnFiltersGaussianfilter()
 {
-	/*if(mainImage.cols)
+	if(mainImage.cols)
 	{
 		Sigma dlg;
 		INT_PTR nRet=dlg.DoModal();
@@ -440,18 +441,12 @@ void COpenCVInterfaceDlg::OnFiltersGaussianfilter()
 		{
 			double s;
 			s=dlg.getSigma();
-
-<<<<<<< .mine
-		prelImage=Filters::gaussianFilter(mainImage,0.5);
-		ShowResult(prelImage);
-=======
 			prelImage=Filters::gaussianFilter(mainImage,s);
 			ShowResult(prelImage);
 		}
->>>>>>> .r20
 	}
 	else
-		MessageBox("No image loaded");*/
+		MessageBox("No image loaded");
 }
 
 void COpenCVInterfaceDlg::OnContrastLogaritmicoperator()
@@ -464,8 +459,8 @@ void COpenCVInterfaceDlg::OnContrastLogaritmicoperator()
 		{
 			prelImage.at<uchar>(i,j)=LookUp[mainImage.at<uchar>(i,j)];
 		}
-	ShowResult(prelImage);
-	delete LookUp;
+		ShowResult(prelImage);
+		delete LookUp;
 }
 
 Mat COpenCVInterfaceDlg::CalculeazaFiltruMedian(int k)
@@ -483,12 +478,11 @@ Mat COpenCVInterfaceDlg::CalculeazaFiltruMedian(int k)
 			int aux = statistici(poz/2,0,poz-1,v);
 			prelImage.at<uchar>(i,j)=aux;
 		}
-
-		return prelImage;
+	
+	return prelImage;
 
 	delete v;
 }
-
 
 void COpenCVInterfaceDlg::OnFiltersMedianfilter()
 {
@@ -502,15 +496,14 @@ void COpenCVInterfaceDlg::OnFiltersMedianfilter()
 		prelImage = CalculeazaFiltruMedian(k);
 		ShowResult(prelImage);
 	}
-	
-}
 
+}
 
 void COpenCVInterfaceDlg::OnContrastExponential()
 {
 	/*
-		Creez un ob de tip ParametersDlg. Cat timp parametrii "m" si "E" nu sunt ambii numere,
-		ii las utilizatorului oportunitatea de a introduce noi date.
+	Creez un ob de tip ParametersDlg. Cat timp parametrii "m" si "E" nu sunt ambii numere,
+	ii las utilizatorului oportunitatea de a introduce noi date.
 	*/
 
 	CParametersDlg parameters;
@@ -523,8 +516,6 @@ void COpenCVInterfaceDlg::OnContrastExponential()
 		double m = 0, pE = 0;
 		m = atof(parameters.m1);
 		pE = atof(parameters.E1);
-	
-		
 
 
 		// Modificarea imaginii
@@ -536,7 +527,7 @@ void COpenCVInterfaceDlg::OnContrastExponential()
 				double c = pow(m,pE) / ( 255 * (pow(255,pE) + pow(m,pE)) );
 				prelImage.at<uchar>(i,j)=255 * ( pow(mainImage.at<uchar>(i,j),pE) / ( pow(mainImage.at<uchar>(i,j),pE) + pow(m,pE) ) + c*mainImage.at<uchar>(i,j) );
 			}
-		ShowResult(prelImage);
+			ShowResult(prelImage);
 	}
 }
 
@@ -552,12 +543,11 @@ double COpenCVInterfaceDlg::Partitie(double v[], int st, int dr)
 			v[i] = v[j];
 			v[j] = aux;
 		}
-	double aux = v[i+1];
-	v[i+1] = v[dr];
-	v[dr] = aux;
-	return i+1;
+		double aux = v[i+1];
+		v[i+1] = v[dr];
+		v[dr] = aux;
+		return i+1;
 }
-
 
 double COpenCVInterfaceDlg::Statistica(double v[], int k, int st, int dr)
 {
@@ -577,12 +567,11 @@ double COpenCVInterfaceDlg::Statistica(double v[], int k, int st, int dr)
 	return 0;
 }
 
-
 void COpenCVInterfaceDlg::OnFiltersMedianFilterAnca()
 {
 	/*
-		Creez un ob de tip MaskDlg. Cat timp parametrul introdus nu e numar,
-		il las pe utilizator sa introduca dimensiunea mastii din nou.
+	Creez un ob de tip MaskDlg. Cat timp parametrul introdus nu e numar,
+	il las pe utilizator sa introduca dimensiunea mastii din nou.
 	*/
 
 	CMaskDlg mask;
@@ -596,7 +585,7 @@ void COpenCVInterfaceDlg::OnFiltersMedianFilterAnca()
 		n = atoi(mask.n1);
 
 		// Modificarea imaginii
-		
+
 		clock_t start, stop;
 		start = clock(); 
 		prelImage = InitImage(mainImage.rows,mainImage.cols);
@@ -610,23 +599,34 @@ void COpenCVInterfaceDlg::OnFiltersMedianFilterAnca()
 					for(int k2=0; k2<n; k2++)
 						v[++ind] = mainImage.at<uchar>(i-n/2+k1, j-n/2+k2);
 				}
-				
-				
+
+
 				int k = (n*n)/2;
 				prelImage.at<uchar>(i, j) = Statistica(v, k, 0, n*n-1);
 			}
-		stop = clock();
-		double rez = double(stop - start);
-		CString rezS;
-		rezS.Format("time = %lf", rez);
-		MessageBox(rezS + " seconds");
+			stop = clock();
+			double rez = double(stop - start);
+			CString rezS;
+			rezS.Format("time = %lf", rez);
+			MessageBox(rezS + " seconds");
 
-		ShowResult(prelImage);
+			ShowResult(prelImage);
 	}
 }
 
-
 void COpenCVInterfaceDlg::OnFiltersZeroCrossingsAnca()
 {
+
+}
+
+void COpenCVInterfaceDlg::OnSobelSobelpi4()
+{
+	if(mainImage.cols)
+	{
+		prelImage=Filters::sobelDirectional(mainImage);
+		ShowResult(prelImage);
+	}
+	else
+		MessageBox("No image loaded");
 
 }
