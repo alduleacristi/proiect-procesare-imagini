@@ -20,6 +20,7 @@
 #include"Filters.h"
 #include "ParametersDlg.h"
 #include "MaskDlg.h"
+#include"Sigma.h"
 
 #include<memory>
 #include <algorithm>
@@ -103,4 +104,5 @@ public:
 	afx_msg void OnContrastExponential();
 	afx_msg void OnFiltersMedianFilterAnca();
 	afx_msg void OnFiltersZeroCrossingsAnca();
+	afx_msg void OnSobelSobelpi4();
 };
