@@ -58,6 +58,7 @@ BEGIN_MESSAGE_MAP(COpenCVInterfaceDlg, CDialogEx)
 	ON_COMMAND(ID_FILTERS_MEDIANFILTER, &COpenCVInterfaceDlg::OnFiltersMedianfilter)
 	ON_COMMAND(ID_CONTRAST_EXPONENTIAL, &COpenCVInterfaceDlg::OnContrastExponential)
 	ON_COMMAND(ID_FILTERS_MEDIANFILTER32797, &COpenCVInterfaceDlg::OnFiltersMedianFilterAnca)
+	ON_COMMAND(ID_FILTERS_ZERO, &COpenCVInterfaceDlg::OnFiltersZeroCrossingsAnca)
 END_MESSAGE_MAP()
 
 // COpenCVInterfaceDlg message handlers
@@ -622,4 +623,10 @@ void COpenCVInterfaceDlg::OnFiltersMedianFilterAnca()
 
 		ShowResult(prelImage);
 	}
+}
+
+
+void COpenCVInterfaceDlg::OnFiltersZeroCrossingsAnca()
+{
+
 }

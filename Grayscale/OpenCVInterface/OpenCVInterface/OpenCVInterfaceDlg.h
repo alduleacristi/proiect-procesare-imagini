@@ -102,4 +102,5 @@ public:
 	afx_msg void OnFiltersMedianfilter();
 	afx_msg void OnContrastExponential();
 	afx_msg void OnFiltersMedianFilterAnca();
+	afx_msg void OnFiltersZeroCrossingsAnca();
 };
