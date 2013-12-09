@@ -133,6 +133,44 @@ void COpenCVInterfaceDlg::OnPaint()
 		CRect r(0,0,w-1,h-1);
 		dc.FillRect(r,ImageBrush);
 
+		CMenu* mmenu =GetMenu();
+		CMenu* submenu =mmenu->GetSubMenu(1);
+		UINT state = submenu->GetMenuState(ID_TOOLS_GRAYLEVELROW,MF_BYCOMMAND);
+		UINT state1 = submenu->GetMenuState(ID_TOOLS_GRAYLEVELCOLUMN,MF_BYCOMMAND);
+		ASSERT(state != 0xFFFFFFFF);
+		ASSERT(state1 != 0xFFFFFFFF);
+		if(state & MF_CHECKED)
+		{ 
+			if(gr->GetY()<mainImage.rows)
+			{
+				gr->setGCheck(true);
+				CPen *pen = new CPen(PS_SOLID,1,RGB(255,0,0));
+				CPen *oldPen;
+				oldPen=(CPen*)dc.SelectObject(pen);
+				dc.MoveTo(0,gr->GetY());
+				dc.LineTo(mainImage.cols,gr->GetY());
+				dc.SelectObject(oldPen);
+				delete pen;
+			}
+		}
+		else
+		{
+			if(state1 & MF_CHECKED)
+			{
+				gr->setGCheck(false);
+				if(gr->GetX()<mainImage.cols)
+				{
+					CPen *pen = new CPen(PS_SOLID,1,RGB(255,0,0));
+					CPen *oldPen;
+					oldPen=(CPen*)dc.SelectObject(pen);
+					dc.MoveTo(gr->GetX(),0);
+					dc.LineTo(gr->GetX(),mainImage.rows);
+					dc.SelectObject(oldPen);
+					delete pen;
+				}
+			}
+
+		}
 	}
 }
 
@@ -243,61 +281,65 @@ void COpenCVInterfaceDlg::OnToolsMagnifier()
 
 void COpenCVInterfaceDlg::OnToolsGraylevelrow()
 {
-	/*if(mainImage.cols)
-	{
-	gr=GrayRowPtr(new GrayRow(this));
-
-	gr->Create(GrayRow::IDD,0);
-
-	gr->ShowWindow(SW_SHOW);
-	}
+	if(mainImage.empty())
+		MessageBox("No image loaded");
 	else
-	MessageBox("No image loaded");*/
+	{
+		CMenu* menu = GetMenu();
+		CMenu* submenu = menu->GetSubMenu(1);
+		UINT state = submenu->GetMenuState(ID_TOOLS_GRAYLEVELROW,MF_BYCOMMAND);
+		ASSERT(state != 0xFFFFFFFF);
+		if(state & MF_CHECKED)
+			submenu->CheckMenuItem(ID_TOOLS_GRAYLEVELROW,MF_UNCHECKED | MF_BYCOMMAND);
+		else {
+			submenu->CheckMenuItem(ID_TOOLS_GRAYLEVELROW,MF_CHECKED | MF_BYCOMMAND);
+			//creez pointer-ul
+
+			Invalidate();
+			gr= GrayRowPtr(new GrayRow(mainImage,this));
+			//creez caseta
+			gr->Create(GrayRow::IDD,0);
+			//afisez caseta
+			gr->ShowWindow(SW_SHOW);
+		}
+
+	}
 }
 
 void COpenCVInterfaceDlg::OnToolsGraylevelcolumn()
 {
-	/*if(mainImage.cols)
-	{
-	gc=GrayColumnPtr(new GrayColumn(this));
-
-	gc->Create(GrayColumn::IDD,0);
-
-	gc->ShowWindow(SW_SHOW);
-	}
+	if(mainImage.empty())
+		MessageBox("No image loaded");
 	else
-	MessageBox("No image loaded");*/
+	{
+		CMenu* menu = GetMenu();
+		CMenu* submenu = menu->GetSubMenu(1);
+		UINT state = submenu->GetMenuState(ID_TOOLS_GRAYLEVELCOLUMN,MF_BYCOMMAND);
+		ASSERT(state != 0xFFFFFFFF);
+		if(state & MF_CHECKED)
+			submenu->CheckMenuItem(ID_TOOLS_GRAYLEVELCOLUMN,MF_UNCHECKED | MF_BYCOMMAND);
+		else
+		{
+			submenu->CheckMenuItem(ID_TOOLS_GRAYLEVELCOLUMN,MF_CHECKED | MF_BYCOMMAND);
+			//creez pointer-ul
+			Invalidate();
+			gr= GrayRowPtr(new GrayRow(mainImage,this));
+			//creez caseta
+			gr->Create(GrayRow::IDD,0);
+			//afisez caseta
+			gr->ShowWindow(SW_SHOW);
+		}
+	}
 }
 
 void COpenCVInterfaceDlg::OnLButtonDown(UINT nFlags, CPoint point)
 {
-	//if(gc.get())
-	//{
-	//	gc->CalcCol(Tools::calcCol(mainImage,point.x),point.x);
-	//	Point p1;
-	//	p1.x=point.x;
-	//	p1.y=0;
-	//	Point p2;
-	//	p2.x=point.x;
-	//	p2.y=mainImage.rows;
-	//	line(mainImage,p1,p2,RGB(0,255,0));
-	//	gc->Invalidate();
-	//	
-	//}
-
-	//if(gr.get())
-	//{
-	//	gr->CalcRow(Tools::calcRow(mainImage,point.y),point.y);
-	//	Point p1;
-	//	p1.x=0;
-	//	p1.y=point.y;
-	//	Point p2;
-	//	p2.x=mainImage.cols;
-	//	p2.y=point.y;
-	//	line(mainImage,p1,p2,RGB(0,255,0));
-	//	gr->Invalidate();
-	//	
-	//}
+	if(gr.get())
+	{
+		gr->SetCoord(point.x,point.y);
+		gr->Invalidate();
+		Invalidate(FALSE);
+	}
 
 	if(mag.get())
 	{	
@@ -601,7 +643,6 @@ void COpenCVInterfaceDlg::OnFiltersMedianFilterAnca()
 						v[++ind] = mainImage.at<uchar>(i-n/2+k1, j-n/2+k2);
 				}
 
-
 				int k = (n*n)/2;
 				prelImage.at<uchar>(i, j) = Statistica(v, k, 0, n*n-1);
 			}
@@ -640,14 +681,14 @@ void COpenCVInterfaceDlg::OnMorphologyConvexhull()
 		Mat rez=mainImage.clone();
 		mainImage=Filters::gaussianFilter(mainImage,1);
 		Scalar meanVal,stdval;
-		
+
 		meanStdDev(mainImage,meanVal,stdval);
 		Canny(mainImage,mainImage,meanVal.val[0]*1/3.,meanVal.val[0]);
-		imshow("contours",mainImage);
+		//imshow("contours",mainImage);
 
 		vector<std::vector<cv::Point>> contours;
 		findContours(mainImage,contours,CV_RETR_LIST,CV_CHAIN_APPROX_NONE,Point(2,2));
-	
+
 		vector<Point> Points;
 		//Points.resize(contours.size()*contours[0].size());
 		for(int i=0;i<contours.size();i++)
@@ -667,9 +708,9 @@ void COpenCVInterfaceDlg::OnMorphologyConvexhull()
 		//	}
 		//}	
 
-	    std::vector<Point> chull;
+		std::vector<Point> chull;
 		c.graham(Points, chull);
-		
+
 		for(int i=0;i<chull.size()-1;i++)
 		{
 			line(rez,chull[i],chull[i+1],Scalar(255,255,255),2);

@@ -17,7 +17,6 @@
 #include"LumVal.h"
 #include"Histogram.h"
 #include"GrayRow.h"
-#include"GrayColumn.h"
 #include"Filters.h"
 #include "ParametersDlg.h"
 #include "MaskDlg.h"
@@ -34,7 +33,6 @@ using namespace cv;
 typedef std::auto_ptr<CResultDlg> CResultPtr;
 typedef std::auto_ptr<MagnifierDlg> MagnifierPtr;
 typedef std::auto_ptr<GrayRow> GrayRowPtr;
-typedef std::auto_ptr<GrayColumn> GrayColumnPtr;
 
 
 class COpenCVInterfaceDlg : public CDialogEx
@@ -58,7 +56,7 @@ private:
 	CResultPtr m_Result;
 	MagnifierPtr mag;
 	GrayRowPtr gr;
-	GrayColumnPtr gc;
+	
 	Mat CalculeazaFiltruMedian(int k);
 
 	double Partitie(double v[], int st, int dr);
