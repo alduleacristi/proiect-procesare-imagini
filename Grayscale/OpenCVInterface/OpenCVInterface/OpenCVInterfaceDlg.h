@@ -7,6 +7,7 @@
 
 #include <opencv2\core\core.hpp>
 #include<opencv2\highgui\highgui.hpp>
+#include<cv.h>
 #include "ResultDlg.h"
 #include"Tools.h"
 #include"GammaValue.h"
@@ -21,6 +22,7 @@
 #include "ParametersDlg.h"
 #include "MaskDlg.h"
 #include"Sigma.h"
+#include"ConvexHull.h"
 
 #include<memory>
 #include <algorithm>
@@ -105,4 +107,5 @@ public:
 	afx_msg void OnFiltersMedianFilterAnca();
 	afx_msg void OnFiltersZeroCrossingsAnca();
 	afx_msg void OnSobelSobelpi4();
+	afx_msg void OnMorphologyConvexhull();
 };

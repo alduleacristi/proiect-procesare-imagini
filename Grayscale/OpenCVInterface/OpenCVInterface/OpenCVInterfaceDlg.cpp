@@ -60,6 +60,7 @@ BEGIN_MESSAGE_MAP(COpenCVInterfaceDlg, CDialogEx)
 	ON_COMMAND(ID_FILTERS_MEDIANFILTER32797, &COpenCVInterfaceDlg::OnFiltersMedianFilterAnca)
 	ON_COMMAND(ID_FILTERS_ZERO, &COpenCVInterfaceDlg::OnFiltersZeroCrossingsAnca)
 	ON_COMMAND(ID_SOBEL_SOBELPI4, &COpenCVInterfaceDlg::OnSobelSobelpi4)
+	ON_COMMAND(ID_MORPHOLOGY_CONVEXHULL, &COpenCVInterfaceDlg::OnMorphologyConvexhull)
 END_MESSAGE_MAP()
 
 // COpenCVInterfaceDlg message handlers
@@ -465,23 +466,23 @@ void COpenCVInterfaceDlg::OnContrastLogaritmicoperator()
 
 Mat COpenCVInterfaceDlg::CalculeazaFiltruMedian(int k)
 {
-	int* v = new int[k*k];
-	int n=mainImage.rows,m=mainImage.cols;
-	prelImage=InitImage(n,m);
+	//int* v = new int[k*k];
+	//int n=mainImage.rows,m=mainImage.cols;
+	//prelImage=InitImage(n,m);
 
-	for(int i=k/2;i<n -k/2;i++)
-		for(int j=k/2;j<m -k/2;j++){
-			int poz=0;
-			for(int i2=i-k/2;i2<i+k/2;i2++)
-				for(int j2=j-k/2;j2<j+k/2;j2++)
-					v[poz++]=mainImage.at<uchar>(i2,j2);
-			int aux = statistici(poz/2,0,poz-1,v);
-			prelImage.at<uchar>(i,j)=aux;
-		}
-	
+	//for(int i=k/2;i<n -k/2;i++)
+	//	for(int j=k/2;j<m -k/2;j++){
+	//		int poz=0;
+	//		for(int i2=i-k/2;i2<i+k/2;i2++)
+	//			for(int j2=j-k/2;j2<j+k/2;j2++)
+	//				v[poz++]=mainImage.at<uchar>(i2,j2);
+	//		int aux = statistici(poz/2,0,poz-1,v);
+	//		prelImage.at<uchar>(i,j)=aux;
+	//	}
+	//
 	return prelImage;
 
-	delete v;
+	//delete v;
 }
 
 void COpenCVInterfaceDlg::OnFiltersMedianfilter()
@@ -629,4 +630,55 @@ void COpenCVInterfaceDlg::OnSobelSobelpi4()
 	else
 		MessageBox("No image loaded");
 
+}
+
+void COpenCVInterfaceDlg::OnMorphologyConvexhull()
+{
+	if(mainImage.cols)
+	{
+		ConvexHull c;
+		Mat rez=mainImage.clone();
+		mainImage=Filters::gaussianFilter(mainImage,1);
+		Scalar meanVal,stdval;
+		
+		meanStdDev(mainImage,meanVal,stdval);
+		Canny(mainImage,mainImage,meanVal.val[0]*1/3.,meanVal.val[0]);
+		imshow("contours",mainImage);
+
+		vector<std::vector<cv::Point>> contours;
+		findContours(mainImage,contours,CV_RETR_LIST,CV_CHAIN_APPROX_NONE,Point(2,2));
+	
+		vector<Point> Points;
+		//Points.resize(contours.size()*contours[0].size());
+		for(int i=0;i<contours.size();i++)
+		{
+			for(int j=0;j<contours[i].size();j++)
+			{
+				Points.push_back(contours[i][j]);
+			}
+		}
+
+		//for(int i=2;i<mainImage.rows-2;i++)
+		//{
+		//	for(int j=2;j<mainImage.cols-2;j++)
+		//	{
+		//		if(mainImage.at<uchar>(i,j)==255)
+		//			Points.push_back(Point(i,j));
+		//	}
+		//}	
+
+	    std::vector<Point> chull;
+		c.graham(Points, chull);
+		
+		for(int i=0;i<chull.size()-1;i++)
+		{
+			line(rez,chull[i],chull[i+1],Scalar(255,255,255),2);
+		}
+
+		line(rez,chull[chull.size()-1],chull[0],Scalar(255,255,255),2);
+		prelImage=rez.clone();
+		ShowResult(prelImage);
+	}
+	else
+		MessageBox("No image loaded");
 }
