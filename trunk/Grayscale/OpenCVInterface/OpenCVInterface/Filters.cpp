@@ -53,8 +53,10 @@ Mat Filters::gaussianFilter(Mat& im, double sigma)
 		WriteConsole(h1,s.c_str(),s.size(),&dw,NULL);
 	}*/
 
-	for(int x=k;x<im.rows-k;x++)
-	  for(int y=k;y<im.cols-k;y++)
+	int rw=im.rows-k;
+	int cl=im.cols-k;
+	for(int x=k;x<rw;x++)
+	  for(int y=k;y<cl;y++)
 	  {
 		  double d=0;
 		  for(int i=-k;i<=k;i++)
