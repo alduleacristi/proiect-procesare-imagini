@@ -1,0 +1,1 @@
+Task-uri procesare de imagini
